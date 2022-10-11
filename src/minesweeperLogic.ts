@@ -5,48 +5,64 @@ export const TILE_STATUSES = {
     MARKED: "marked",
 }
 
-type tileType = {
-    row: number;
-    col: number;
-    element: HTMLDivElement;
-    hasMine: boolean;
-    status: string;
+class Mine {
+    constructor(public row: number, public col: number) {}
 }
 
-type boardType = tileType[][]
-
-type mineType = {
-    row: number,
+class Tile {
+    row: number
     col: number
-} 
+    element: HTMLDivElement
+    status: string
+    hasMine: boolean
+
+    constructor(row: number, col: number, element: HTMLDivElement, status: string) {
+        this.row = row
+        this.col = col
+        this.element = element
+        this.status = status
+        this.hasMine = false
+    }
+}
+
+class MinesweeperBoard {
+    tiles: Tile[][]
+    mines: Mine[]
+    size: number
+
+    constructor(size: number) {
+        this.size = size
+        this.tiles = []
+        this.mines = []
+    }
+}
 
 export function createBoard(boardSize: number, minesCount: number) {
     const mines = createMinesPositions(minesCount)
-    let board: boardType = []
+    let board = new MinesweeperBoard(boardSize)
 
     for (let row = 0; row < boardSize; row++) {
-        let rowArr: tileType[] = []
+        let rowArr: Tile[] = []
         for (let col = 0; col < boardSize; col++) {
             const tileElement = document.createElement("div")
 
-            const tile: tileType = {
+            const tile = new Tile(
                 row,
                 col,
-                element: tileElement,
-                hasMine: mines.some((mine) => positionMatch(mine, { row, col })),
-                status: TILE_STATUSES.HIDDEN,
-            }
+                tileElement,
+                TILE_STATUSES.HIDDEN,
+            )
 
             rowArr.push(tile)
         }
 
-        board.push(rowArr)
+        board.tiles.push(rowArr)
     }
 
     return board
 }
 
-export function revealTile(tile: tileType,  board: boardType) {
+export function revealTile(tile: Tile,  board: MinesweeperBoard) {
     if (tile.status !== TILE_STATUSES.HIDDEN) {
         return
     }
@@ -68,13 +84,13 @@ export function revealTile(tile: tileType,  board: boardType) {
     }
 }
 
-export function markTile(tile: tileType) {}
+export function markTile(tile: Tile) {}
 
 function createMinesPositions(mineCount: number) {
-    let minesPositions: mineType[]  = []
+    let minesPositions: Mine[]  = []
 
     while (minesPositions.length < mineCount) {
-        const mine: mineType = {
+        const mine: Mine = {
             row: Math.floor(Math.random() * 10),
             col: Math.floor(Math.random() * 10),
         }
@@ -87,12 +103,12 @@ function createMinesPositions(mineCount: number) {
     return minesPositions
 }
 
-function getAdjacentTiles(board: boardType, { row, col }: mineType) {
+function getAdjacentTiles(board: MinesweeperBoard, { row, col }: Mine) {
     let tiles = []
 
     for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
         for (let colOffset = -1; colOffset <= 1; colOffset++) {
-            const tile = board[row + rowOffset]?.[col + colOffset]
+            const tile = board.tiles[row + rowOffset]?.[col + colOffset]
             if (tile) {
                 tiles.push(tile)
             }
@@ -102,6 +118,6 @@ function getAdjacentTiles(board: boardType, { row, col }: mineType) {
     return tiles
 }
 
-function positionMatch(a: mineType | tileType, b: mineType | tileType) {
+function positionMatch(a: Mine | Tile, b: Mine | Tile) {
     return a.row == b.row && a.col == b.col
 }
