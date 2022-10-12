@@ -1,4 +1,4 @@
-import {TILE_STATUSES, createBoard, revealTile, markTile} from "./minesweeperLogic.js"
+import { createBoard, revealTile, markTile } from "./minesweeperLogic.js"
 
 const boardElement = document.querySelector("#board")!
 
@@ -21,4 +21,3 @@ minesweeperBoard.tiles.forEach((row) => {
         })
     })
 })
-
