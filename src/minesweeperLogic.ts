@@ -101,12 +101,12 @@ export function markTile(tile: Tile) {
     if(tile.status === TILE_STATUSES.HIDDEN) {
         tile.status = TILE_STATUSES.MARKED
         tile.element.classList.add("marked")
-        markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML + 1).toString()
+        markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML - 1).toString()
     }
     else if(tile.status === TILE_STATUSES.MARKED) {
         tile.status = TILE_STATUSES.HIDDEN
         tile.element.classList.remove("marked")
-        markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML - 1).toString()
+        markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML + 1).toString()
     }
 
 }
