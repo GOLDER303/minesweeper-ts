@@ -27,31 +27,35 @@ class Tile {
 
 class MinesweeperBoard {
     tiles: Tile[][]
-    mines: Mine[]
+    minesSet: boolean
     size: number
+    minesCount: number
 
-    constructor(size: number) {
-        this.size = size
+    constructor(size: number, minesCount: number) {
         this.tiles = []
-        this.mines = []
+        this.minesSet = false
+        this.size = size
+        this.minesCount = minesCount
+    }
+
+    setMinesPositions(playerClick: { row: number; col: number }) {
+        const mines = createMinesPositions(this.minesCount, playerClick)
+        mines.forEach((mine) => {
+            this.tiles[mine.row][mine.col].hasMine = true
+        })
+        this.minesSet = true
     }
 }
 
 export function createBoard(boardSize: number, minesCount: number) {
-    const mines = createMinesPositions(minesCount)
-    let board = new MinesweeperBoard(boardSize)
+    const board = new MinesweeperBoard(boardSize, minesCount)
 
     for (let row = 0; row < boardSize; row++) {
         let rowArr: Tile[] = []
         for (let col = 0; col < boardSize; col++) {
             const tileElement = document.createElement("div")
 
-            const tile = new Tile(
-                row,
-                col,
-                tileElement,
-                TILE_STATUSES.HIDDEN,
-            )
+            const tile = new Tile(row, col, tileElement, TILE_STATUSES.HIDDEN)
 
             rowArr.push(tile)
         }
@@ -62,13 +66,18 @@ export function createBoard(boardSize: number, minesCount: number) {
     return board
 }
 
-export function revealTile(tile: Tile,  board: MinesweeperBoard) {
+export function revealTile(tile: Tile, board: MinesweeperBoard) {
+    if (!board.minesSet) {
+        board.setMinesPositions({ ...tile })
+    }
+
     if (tile.status !== TILE_STATUSES.HIDDEN) {
         return
     }
 
     if (tile.hasMine) {
         tile.status = TILE_STATUSES.MINE
+        tile.element.textContent = "X"
         return
     }
 
@@ -86,16 +95,13 @@ export function revealTile(tile: Tile,  board: MinesweeperBoard) {
 
 export function markTile(tile: Tile) {}
 
-function createMinesPositions(mineCount: number) {
-    let minesPositions: Mine[]  = []
+function createMinesPositions(mineCount: number, clickedTile: { row: number; col: number }) {
+    let minesPositions: Mine[] = []
 
     while (minesPositions.length < mineCount) {
-        const mine: Mine = {
-            row: Math.floor(Math.random() * 10),
-            col: Math.floor(Math.random() * 10),
-        }
+        const mine = new Mine(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10))
 
-        if (!minesPositions.includes(mine)) {
+        if (!minesPositions.includes(mine) && mine != clickedTile) {
             minesPositions.push(mine)
         }
     }
@@ -104,7 +110,7 @@ function createMinesPositions(mineCount: number) {
 }
 
 function getAdjacentTiles(board: MinesweeperBoard, { row, col }: Mine) {
-    let tiles = []
+    let tiles: Tile[] = []
 
     for (let rowOffset = -1; rowOffset <= 1; rowOffset++) {
         for (let colOffset = -1; colOffset <= 1; colOffset++) {
