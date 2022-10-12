@@ -16,8 +16,21 @@ body {
 }
 
 .top-bar {
+    display: flex;
+    width: 450px;
     height: 80px;
-    border-bottom: 1px solid #222;
+    align-items: center;
+}
+
+.top-bar div {
+    width: 150px;
+    text-align: center;
+}
+
+.top-bar .restart-btn {
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 4px;
 }
 
 .board {
@@ -36,4 +49,8 @@ body {
 
 .board div:hover {
     background-color: #777;
+}
+
+.marked {
+    background-color: red !important;
 }
