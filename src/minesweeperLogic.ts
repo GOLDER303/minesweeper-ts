@@ -93,7 +93,21 @@ export function revealTile(tile: Tile, board: MinesweeperBoard) {
     }
 }
 
-export function markTile(tile: Tile) {}
+export function markTile(tile: Tile) {
+    const markedTilesCounter = document.querySelector("#minesCount")!
+
+    if(tile.status === TILE_STATUSES.HIDDEN) {
+        tile.status = TILE_STATUSES.MARKED
+        tile.element.classList.add("marked")
+        markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML + 1).toString()
+    }
+    else if(tile.status === TILE_STATUSES.MARKED) {
+        tile.status = TILE_STATUSES.HIDDEN
+        tile.element.classList.remove("marked")
+        markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML - 1).toString()
+    }
+
+}
 
 function createMinesPositions(mineCount: number, clickedTile: { row: number; col: number }) {
     let minesPositions: Mine[] = []
