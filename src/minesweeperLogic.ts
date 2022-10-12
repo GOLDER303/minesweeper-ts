@@ -48,6 +48,8 @@ class MinesweeperBoard {
 }
 
 export function createBoard(boardSize: number, minesCount: number) {
+    document.querySelector("#minesCount")!.innerHTML = minesCount.toString()
+
     const board = new MinesweeperBoard(boardSize, minesCount)
 
     for (let row = 0; row < boardSize; row++) {
