@@ -84,6 +84,7 @@ export function revealTile(tile: Tile, board: MinesweeperBoard) {
     }
 
     tile.status = TILE_STATUSES.REVEALED
+    tile.element.classList.add("revealed")
 
     const adjacentTiles = getAdjacentTiles(board, { row: tile.row, col: tile.col })
     const adjacentMines = adjacentTiles.filter((tile) => tile.hasMine)
