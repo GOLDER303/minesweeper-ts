@@ -6,9 +6,9 @@ export const TILE_STATUSES = {
 }
 
 export enum GAME_STATE {
-    Win,
-    Lose,
-    NotEnded
+    WIN,
+    LOSS,
+    NOT_ENDED
 }
 
 class Mine {
@@ -87,7 +87,6 @@ export function revealTile(tile: Tile, board: MinesweeperBoard) {
         tile.status = TILE_STATUSES.MINE
         tile.element.classList.add("revealed")
         tile.element.classList.add("mine")
-        tile.element.classList.add("bg-image")
         tile.element.classList.add("red-bg")
         return
     }
@@ -111,13 +110,11 @@ export function markTile(tile: Tile) {
     if(tile.status === TILE_STATUSES.HIDDEN) {
         tile.status = TILE_STATUSES.MARKED
         tile.element.classList.add("marked")
-        tile.element.classList.add("bg-image")
         markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML - 1).toString()
     }
     else if(tile.status === TILE_STATUSES.MARKED) {
         tile.status = TILE_STATUSES.HIDDEN
         tile.element.classList.remove("marked")
-        tile.element.classList.add("bg-image")
         markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML + 1).toString()
     }
 
@@ -170,13 +167,13 @@ export function checkWin(board: MinesweeperBoard) {
     })
 
     if(win) {
-        return GAME_STATE.Win
+        return GAME_STATE.WIN
     }
     else if(lost) {
-        return GAME_STATE.Lose
+        return GAME_STATE.LOSS
     }
     else {
-        return GAME_STATE.NotEnded
+        return GAME_STATE.NOT_ENDED
     }
 }
 

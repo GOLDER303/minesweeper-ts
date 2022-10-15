@@ -1,9 +1,12 @@
-import { createBoard, revealTile, markTile, checkWin, GAME_STATE } from "./minesweeperLogic.js"
+import { createBoard, revealTile, markTile, checkWin, GAME_STATE, TILE_STATUSES } from "./minesweeperLogic.js"
 
 const boardElement = document.querySelector("#board")!
+const gameResultElement = document.querySelector("#gameResult")!
 
 const BOARD_SIZE = 10
 const MINES_COUNT = 5
+
+let gameNotEnded = true
 
 const minesweeperBoard = createBoard(BOARD_SIZE, MINES_COUNT)
 
@@ -12,33 +15,54 @@ minesweeperBoard.tiles.forEach((row) => {
         boardElement.appendChild(tile.element)
 
         tile.element.addEventListener("click", () => {
-            revealTile(tile, minesweeperBoard)
-            checkGameEnd()
+            if (gameNotEnded) {
+                revealTile(tile, minesweeperBoard)
+                checkGameEnd()
+            }
         })
 
         tile.element.addEventListener("contextmenu", (e) => {
-            e.preventDefault()
-            markTile(tile)
-            checkGameEnd()
+            if (gameNotEnded) {
+                e.preventDefault()
+                markTile(tile)
+                checkGameEnd()
+            }
         })
     })
 })
 
 function checkGameEnd() {
     const gameState = checkWin(minesweeperBoard)
-    switch (gameState) {
-        case GAME_STATE.Win:
+    if (gameState === GAME_STATE.NOT_ENDED) {
+        return
+    }
 
-            // win
-            break
+    gameNotEnded = false
 
-        case GAME_STATE.Lose:
+    if (gameState === GAME_STATE.WIN) {
+        gameResultElement.textContent = "You Won!"
+        gameResultElement.classList.add("game-won")
 
-            // lost
-            break
+        minesweeperBoard.tiles.forEach((row) => {
+            row.forEach((tile) => {
+                if (tile.hasMine) {
+                    tile.element.classList.add("marked")
+                }
+            })
+        })
+    } else {
+        gameResultElement.textContent = "You Lost!"
+        gameResultElement.classList.add("game-lost")
 
-        case GAME_STATE.NotEnded:
-
-            return
+        minesweeperBoard.tiles.forEach((row) => {
+            row.forEach((tile) => {
+                if (tile.status === TILE_STATUSES.MARKED) {
+                    markTile(tile)
+                }
+                if (tile.hasMine) {
+                    tile.element.classList.add("mine", "revealed")
+                }
+            })
+        })
     }
 }
