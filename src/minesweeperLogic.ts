@@ -79,7 +79,10 @@ export function revealTile(tile: Tile, board: MinesweeperBoard) {
 
     if (tile.hasMine) {
         tile.status = TILE_STATUSES.MINE
-        tile.element.textContent = "X"
+        tile.element.classList.add("revealed")
+        tile.element.classList.add("mine")
+        tile.element.classList.add("bg-image")
+        tile.element.classList.add("red-bg")
         return
     }
 
@@ -102,11 +105,13 @@ export function markTile(tile: Tile) {
     if(tile.status === TILE_STATUSES.HIDDEN) {
         tile.status = TILE_STATUSES.MARKED
         tile.element.classList.add("marked")
+        tile.element.classList.add("bg-image")
         markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML - 1).toString()
     }
     else if(tile.status === TILE_STATUSES.MARKED) {
         tile.status = TILE_STATUSES.HIDDEN
         tile.element.classList.remove("marked")
+        tile.element.classList.add("bg-image")
         markedTilesCounter.innerHTML = (+markedTilesCounter.innerHTML + 1).toString()
     }
 

@@ -68,10 +68,26 @@ div.revealed:hover {
     background-color: #b3b3b3;
 }
 
-div.marked {
-    background-color: red;
+.bg-image {
+    padding: 3px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-origin: content-box;
 }
 
-div.marked:hover {
-    background-color: rgb(221, 0, 0);
+div.marked {
+    background-image: url("img/flag.svg");
+}
+
+div.mine {
+    background-image: url("img/mine.svg");
+}
+
+div.red-bg {
+    background-color: #ff0000;
+}
+
+div.red-bg:hover {
+    background-color: #e20000;
 }
