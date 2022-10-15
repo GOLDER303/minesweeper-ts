@@ -5,6 +5,12 @@ export const TILE_STATUSES = {
     MARKED: "marked",
 }
 
+export enum GAME_STATE {
+    Win,
+    Lose,
+    NotEnded
+}
+
 class Mine {
     constructor(public row: number, public col: number) {}
 }
@@ -70,7 +76,7 @@ export function createBoard(boardSize: number, minesCount: number) {
 
 export function revealTile(tile: Tile, board: MinesweeperBoard) {
     if (!board.minesSet) {
-        board.setMinesPositions({ ...tile })
+        board.setMinesPositions(tile)
     }
 
     if (tile.status !== TILE_STATUSES.HIDDEN) {
@@ -144,6 +150,34 @@ function getAdjacentTiles(board: MinesweeperBoard, { row, col }: Mine) {
     }
 
     return tiles
+}
+
+export function checkWin(board: MinesweeperBoard) {
+    let lost = false
+    let win = false
+
+    lost = board.tiles.some(row => {
+        return row.some( tile => {
+            return tile.status == TILE_STATUSES.MINE
+        })
+    })
+
+    win = board.tiles.every(row => {
+        return row.every(tile => {
+            return (tile.status == TILE_STATUSES.REVEALED || (tile.hasMine && (tile.status === TILE_STATUSES.MARKED || tile.status === TILE_STATUSES.HIDDEN)))
+           
+        })
+    })
+
+    if(win) {
+        return GAME_STATE.Win
+    }
+    else if(lost) {
+        return GAME_STATE.Lose
+    }
+    else {
+        return GAME_STATE.NotEnded
+    }
 }
 
 function positionMatch(a: Mine | Tile, b: Mine | Tile) {
